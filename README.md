@@ -27,13 +27,14 @@ Público com pouca familiaridade com tecnologia.
 ## 🤖 Agentes Envolvidos
 Liste os agentes que existirão no sistema e suas funções.
 Exemplo:
-- Agente A: coleta dados
-- Agente B: toma decisões
-- Agente C: executa ações no ambiente
+- Agente A: Recebe uma preferência do cliente e manda quais opções de imoveis na região.
+- Agente B: Registra imóvel de um vendendor que deseja vender o imóvel para o catálogo.
+- Agente C: ....
 
 ## 🧱 Tecnologias Pretendidas
-- Linguagem de programação
-- Bibliotecas e frameworks
+- Make ou n8n, para 
+- Whatsapp Business
+- LangChain
 - Ferramentas para teste, simulação, visualização, etc.
 
 > Justifique, sempre que possível, **por que escolheu cada ferramenta**.
