@@ -2,9 +2,9 @@
 > Um nome provisório que resuma bem a ideia. Seja criativo, mas claro!
 
 ## 👨‍🎓 Integrantes
-- Nome do Estudante 1
-- Nome do Estudante 2
-- ...
+- Disraeli Michelangelo Rafael da Costa Filho
+- José Ruan Serafim de Brito
+- Diogo Roberto Santos Lira
 
 ## 💡 Ideia Principal
 Descreva em poucas linhas o que o projeto propõe fazer. 
