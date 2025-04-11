@@ -1,4 +1,4 @@
-# Nome do Projeto
+# Imobibot
 > Um nome provisório que resuma bem a ideia. Seja criativo, mas claro!
 
 ## 👨‍🎓 Integrantes
@@ -7,15 +7,22 @@
 - Diogo Roberto Santos Lira
 
 ## 💡 Ideia Principal
-Descreva em poucas linhas o que o projeto propõe fazer. 
-Pense como se estivesse explicando para alguém fora da área de tecnologia.
+O projeto propõe criar um assistente virtual inteligente para atender clientes de uma imobiliária pelo WhatsApp. Ele responde dúvidas automaticamente, agenda visitas, envia catálogos de imóveis em PDF, registra informações dos clientes e envia atualizações sobre as negociações. Com inteligência artificial, o sistema aprende as preferências dos clientes para recomendar imóveis de forma personalizada, tornando o atendimento mais rápido, prático e eficiente.
 
 ## 🎯 Objetivos
-- Liste de forma clara o que o sistema pretende resolver ou melhorar.
-- Pode usar bullets ou parágrafos curtos.
+- Facilitar a comunicação entre a imobiliária e os clientes por meio do WhatsApp, uma plataforma amplamente usada.
+- Automatizar o atendimento, respondendo dúvidas frequentes de forma rápida e eficiente, sem depender de um atendente humano.
+- Agilizar processos, como agendamento de visitas, envio de catálogos e acompanhamento de negociações.
+- Organizar e registrar informações dos clientes, como contatos, preferências e histórico de atendimento, em planilhas ou sistemas internos.
+- Oferecer recomendações personalizadas de imóveis com base nas preferências e no comportamento do cliente.
+- Melhorar a experiência do cliente, tornando o processo de compra, venda ou aluguel mais simples, conveniente e agradável.
+- Aumentar as chances de conversão, com atendimento mais rápido, relevante e disponível 24 horas por dia.
 
 ## 👥 Público-Alvo
-Quem se beneficia com esse projeto? Um setor específico? Um tipo de usuário?
+Pessoas que buscam um lugar novo para morar;
+Jovens, Adultos, Idosos que buscam uma apartamento, casa, mansão para adquirir;
+Pessoas que buscam vender imóveis;
+Público com pouca familiaridade com tecnologia.
 
 ## 🤖 Agentes Envolvidos
 Liste os agentes que existirão no sistema e suas funções.
