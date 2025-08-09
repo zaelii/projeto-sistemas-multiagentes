@@ -78,7 +78,7 @@ O progresso do projeto será gerenciado no **GitHub Projects**, com:
 - [ ] Quadro no GitHub Projects criado.  
 - [ ] Primeiras tarefas definidas e atribuídas.
 
-## 📄 Documentação Futura
+## 📄 Documentação
 - Diagramas de arquitetura.  
 - Relatórios de progresso.  
 - Scripts de testes.  
