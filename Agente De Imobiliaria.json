@@ -1,0 +1,582 @@
+{
+  "name": "Agente De Imobiliaria",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dd1dbd8f-7934-42c5-aef7-e6a8a3072028",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "943bec8d-0880-4c6e-8571-c999e59d5750",
+      "name": "Webhook",
+      "webhookId": "dd1dbd8f-7934-42c5-aef7-e6a8a3072028"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "280c5f92-5d8b-48a5-8acb-5d17c2dcdf2d",
+              "name": "Quem mandou",
+              "value": "={{ $json.body.data.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "5e354b3a-3226-4447-88b3-dab00decafc4",
+              "name": "Instancia",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "dd33e8dc-15ca-4503-99b8-177be0d18928",
+              "name": "Mensagem",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "a688a0fc-e80b-4452-bd70-88bd1aed4550",
+              "name": "Id da mensagem",
+              "value": "={{ $json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "bce1df6a-a8ee-43c4-ab24-61e3df2f6055",
+              "name": "Nome da pessoa",
+              "value": "={{ $json.body.data.pushName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "07a64c3f-31c6-44f7-90b0-d8e33762c6ad",
+      "name": "Dados"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Dados').item.json.Mensagem }}",
+        "options": {
+          "systemMessage": "=Você é um assistente virtual especializado em locação de imóveis da imobiliária, atuando exclusivamente em Campina Grande – PB.\n\nSua principal função é auxiliar clientes que buscam imóveis para alugar, fornecendo sugestões personalizadas com base em suas **preferências**, **localização desejada**, **perfil familiar** e **orçamento disponível**.\n\nVocê deve:\n- Ser cordial, prestativo e objetivo.\n- Apresentar imóveis compatíveis com o que o cliente procura.\n- Explicar as vantagens de cada imóvel ou bairro sugerido.\n- Estar sempre disponível para esclarecer dúvidas e acompanhar todo o processo de locação.\n- Sugerir alternativas próximas ao perfil solicitado, caso não haja disponibilidade exata.\n\n**Informações do Cliente:**\n- **Nome:** {{ $('Dados').item.json['Quem mandou'] }}\n- **Data atual:** {{ $now }}\n\nAo interagir com o cliente:\n- Pergunte quanto ele pretende gastar mensalmente com aluguel.\n- Pergunte sobre a localização preferida (ex: Catolé, Alto Branco, Palmeira etc.).\n- Verifique se ele possui preferência por casa ou apartamento, número de quartos e vagas de garagem.\n- Avalie se o imóvel será para família, estudante, casal ou trabalho.\n- é possivel vizualizar a imagem de cada imovél, pois cada um possui um link de uma imagem.\n- Caso a pessoa queira marcar uma visita, você deve acionar o Agente de Calendario Visita e perguntar qual data o cliente gostaria pois ele irá marcar na minha agenda que terá uma visita marcada.\n\nCom base nessas informações, **filtre os imóveis disponíveis** e apresente as opções mais relevantes com breves descrições e valores mensais.\n\nSeja sempre proativo, buscando facilitar a escolha e o fechamento da locação.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "42eaf84b-0f4e-4d69-8de7-94af39b019ed",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        336
+      ],
+      "id": "2d1d2d8a-bdee-4c08-b6dd-b2113177b008",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7QImKhOo12xXdeh1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Dados').item.json['Quem mandou'] }}",
+        "sessionTTL": 3600,
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        496,
+        336
+      ],
+      "id": "3c38ceeb-e616-4866-811d-45d85a1887da",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "5bp2dFGnU9zQnybe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "read-messages",
+        "instanceName": "={{ $('Dados').item.json.Instancia }}",
+        "remoteJid": "={{ $('Dados').item.json['Quem mandou'] }}",
+        "messageId": "={{ $('Dados').item.json['Id da mensagem'] }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        992,
+        0
+      ],
+      "id": "b0e3ba87-52c9-46e2-932b-a2dc36204b7c",
+      "name": "Marcar mensagens como lidas",
+      "credentials": {
+        "evolutionApi": {
+          "id": "wshxUWSo3ca7J8fn",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Dados').item.json.Instancia }}",
+        "remoteJid": "={{ $('Dados').item.json['Quem mandou'] }}",
+        "messageText": "={{ $('AI Agent').item.json.output }}",
+        "options_message": {
+          "delay": 3000
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "a906c70a-912b-49b2-9938-a7a6b48d4be2",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "wshxUWSo3ca7J8fn",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        0
+      ],
+      "id": "07482d0c-ced3-473a-b8c7-f63646fdc086",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get a document in Google Docs",
+        "operation": "get",
+        "documentURL": "=https://docs.google.com/document/d/1bS0MP9NTOy6P4YxCc1IYurU6fBWE2873v3LYw284UG0/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        896,
+        368
+      ],
+      "id": "09207e15-1328-44c0-bee3-a1f78572317d",
+      "name": "Sobre_imoveis1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "EiLuOPPQjDQly5Id",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "gl": "br",
+          "hl": "pt-br"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        368
+      ],
+      "id": "1f789e83-1f52-4516-bc67-dfa3690830fc",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "ewWDZpZCc5oHQyWX",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Acione essa tool para chamar o agente de contratos.",
+        "workflowId": {
+          "__rl": true,
+          "value": "v5cPX3VjWugNnbms",
+          "mode": "list",
+          "cachedResultName": "Sub-agente de Contrato"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "input": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('input', `Aqui é a mensagem que será enviada ao sub agente`, 'string') }}",
+            "key": "={{ $json.body.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "input",
+              "displayName": "input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        368
+      ],
+      "id": "046bce00-f152-4068-b367-996bc3b42d75",
+      "name": "Agente Contratos"
+    },
+    {
+      "parameters": {
+        "content": "##                 Tratamento de Informações \n",
+        "height": 224,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "1af0975a-f2e3-47c0-a49d-621b11f00d5c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "##                Receber Bate-papo Whatsapp\n",
+        "height": 224,
+        "width": 432,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "02f70a33-9b3c-4591-8e9f-1e006e917a37",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "##                Ferramentas do Agente\n\n",
+        "height": 208,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        704,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "f47bc5e2-e9c2-46d6-8301-47c9875a5820",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "##                Inteligência do Agente\n\n\n",
+        "height": 208,
+        "width": 336,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "d708a026-7bf6-4ad7-bac8-1f7dd7d193ca",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "disraelicosta@gmail.com",
+          "mode": "list",
+          "cachedResultName": "disraelicosta@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', `Data e horario escolhido pelo usuario`, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', `60 minutos após o inicio`, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `Entitule o nome do compromisso assim (\"nome do cliente + nome do lugar onde está o imóvel [endereço])`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        512
+      ],
+      "id": "a4bfc2a6-17ab-48a5-8c3f-5becdad403fd",
+      "name": "Agendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vY4tgkqCDVQKMqII",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Sub-Agente 1",
+        "height": 368,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1216,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "854098ab-e44c-4e1a-930c-a58b9299a0d2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        496
+      ],
+      "id": "510e9001-7845-411e-9f40-b217db441bba",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "7QImKhOo12xXdeh1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Agente que marca visitas com o cliente",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=##Função\n\nSua função é realizar agendamentos com objetividade. O usuário irá te informar o horário e o motivo para o agendamento.\n\nSeguindo o padrão brasileiro de data e hora (DD/MM/AAAA e HH), opere no fuso horário \"America/Sao_Paulo\". hora atual: {{ $now }}\n\nRegras:\n\n## Criar agendamento\n- Utilize a tool de \"Agendar\" create_event sempre que o usuario falar em \"Agendar\", \"agenda\", \"lembrar\", \"ligar\", \"conversar\", \"mandar\".\n- Crie um evento no Calendário do Google na data e hora solicitada pelo usuario.\n\n## Consultar agendamento\n- Utilize a tool \"Consultar\" getall:event sempre que for solicitado para saber os agendamentos feitos.\n- Sempre que for fazer um novo agendamento confira as datas e horarios nessa tool também.\n- Só retorne para o usuario os agendamentos que estão no Google Calendar, não utilize supostos agendamento da memoria, pois o usuário pode ter entrado no Google Calendar e removido o agendamento manualmente.\n\n## Deletar agendamento\n- Utilize a tool \"Deletar\" delete:event sempre que o usuário pedir para \"deletar\", \"excluir\", \"apagar\" um determinado evento.\n- Utilize a tool \"Consultar\" getall:event para achar o evento em questão para ser deletado.\n\n## Atualizar agendamento\n- Sempre que for solicitado para \"atualizar\", \"alterar\", \"mudar\" um determinado evento, utilize a tool \"Consultar\" getall:event para achar o evento em questão para ser atualizado, depois utilize a tool \"Deletar\" delete:event para deletar o evento e por ultimo utilize a tool de \"Agendar\" create_event para criar um novo evento."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        320
+      ],
+      "id": "d36080ab-e501-4eb0-873f-41d71fead507",
+      "name": "Agente Calendario Visita"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Marcar mensagens como lidas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar mensagens como lidas": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sobre_imoveis1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Contratos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Calendario Visita",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Calendario Visita",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Calendario Visita": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fc2a59da-4aee-4926-8a54-a602a0ddf47a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "29d0fc40be53812ebc587dee64a531a75cb06cf4873d85bdf9e29c388a05d6fe"
+  },
+  "id": "GnJ9XUGqjGt9hWVf",
+  "tags": []
+}
